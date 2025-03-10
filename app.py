@@ -13,6 +13,27 @@ conn = pyodbc.connect(
 
 cursor = conn.cursor()
 
+def loginBase ():
+    cursor.execute("""SELECT Id, Nome FROM Bases ORDER BY Id""")
+    bases = cursor.fetchall()
+    for base in bases:
+        print(f"({base.Id}) - {base.Nome}")
+    opcao_bases = input("Qual base deseja acessar?\n")
+    opcao_bases = int(opcao_bases)
+    cursor.execute("SELECT Cnpj, Email, Senha FROM Bases WHERE Id = ?", (opcao_bases,))
+    dados_base = cursor.fetchone()
+    user_cnpj, user_email, user_senha = dados_base
+    options = webdriver.ChromeOptions()
+    options.add_experimental_option("detach", True)
+    driver = webdriver.Chrome(options=options)
+    driver.get("https://mob.nox.com.br/Login")
+    driver.maximize_window()
+    driver.find_element(By.NAME, "cnpj").send_keys(user_cnpj)
+    driver.find_element(By.NAME, "user").send_keys(user_email)
+    driver.find_element(By.NAME, "password").send_keys(user_senha)
+    time.sleep(0.5)
+    driver.find_element(By.ID, "btnLogin").click()
+
 opcao = input("(1) - Cadastrar Base\n(2) - Logar em Base\n(3) - Excluir Base\n(4) - Consultar Base\n")
 
 if opcao == "1":
@@ -32,25 +53,10 @@ if opcao == "1":
 
 
 elif opcao == "2":
-    cursor.execute("""SELECT Id, Nome FROM Bases ORDER BY Id""")
-    bases = cursor.fetchall()
-    for base in bases:
-        print(f"({base.Id}) - {base.Nome}")
-    opcao_bases = input("Qual base deseja acessar?\n")
-    opcao_bases = int(opcao_bases)
-    cursor.execute("SELECT Cnpj, Email, Senha FROM Bases WHERE Id = ?", (opcao_bases,))
-    dados_base = cursor.fetchone()
-    user_cnpj, user_email, user_senha = dados_base
-    options = webdriver.ChromeOptions()
-    options.add_experimental_option("detach", True)
-    driver = webdriver.Chrome(options=options)
-    driver.get("https://mob.nox.com.br/Login")
-    driver.maximize_window()
-    driver.find_element(By.NAME, "cnpj").send_keys(user_cnpj)
-    driver.find_element(By.NAME, "user").send_keys(user_email)
-    driver.find_element(By.NAME, "password").send_keys(user_senha)
-    time.sleep(3)
-    driver.find_element(By.ID, "btnLogin").click()
+    loginBase()
+    
+    
+        
 
 
 elif opcao == "3":
