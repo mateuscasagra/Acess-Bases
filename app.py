@@ -34,7 +34,7 @@ def loginBase ():
     time.sleep(0.5)
     driver.find_element(By.ID, "btnLogin").click()
 
-opcao = input("(1) - Cadastrar Base\n(2) - Logar em Base\n(3) - Excluir Base\n(4) - Consultar Base\n")
+opcao = input("(1) - Cadastrar Base\n(2) - Logar em Base\n(3) - Editar dados(Manutenção)\n(4) - Consultar Base\n(5) - Excluir Base")
 
 if opcao == "1":
     nome = input("Digite o nome: ")
@@ -57,19 +57,22 @@ elif opcao == "2":
     
     
         
-
-
-elif opcao == "3":
+elif opcao =="3":
     cursor.execute("""SELECT Id, Nome FROM Bases""")
     bases = cursor.fetchall()
     for base in bases:
         print(f"({base.Id}) - {base.Nome}")
+    opcao_edicao = input("Qual base deseja editar?")
+    opcao_edicao = int(opcao_edicao)
     
-    opcao_delete = input("Qual base deseja excluir?\n")
-    opcao_delete = int(opcao_delete)
-    cursor.execute("DELETE FROM Bases WHERE Id = ?", (opcao_delete))
-    conn.commit()
-    print("Base Removida!")
+    
+    
+
+
+    
+    
+
+    
     
     
 elif opcao == "4":
@@ -82,7 +85,19 @@ elif opcao == "4":
     cursor.execute("""SELECT Id, Nome, Cnpj, Email, Senha FROM Bases WHERE Id = ?""", (opcao_busca))
     base_buscada = cursor.fetchall()
     print(base_buscada)
-    # print(f"{base_buscada.Id}\n{base_buscada.Nome}\n{base_buscada.Cnpj}\n{base_buscada.Email}\n{base_buscada.Senha}")
+   
+    
+elif opcao == "5":
+    cursor.execute("""SELECT Id, Nome FROM Bases""")
+    bases = cursor.fetchall()
+    for base in bases:
+        print(f"({base.Id}) - {base.Nome}")
+    
+    opcao_delete = input("Qual base deseja excluir?\n")
+    opcao_delete = int(opcao_delete)
+    cursor.execute("DELETE FROM Bases WHERE Id = ?", (opcao_delete))
+    conn.commit()
+    print("Base Removida!")
     
     
     
