@@ -2,18 +2,18 @@
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 import pyodbc
-
+import time
 
 conn = pyodbc.connect(
     'DRIVER={ODBC Driver 17 for SQL Server};'
-    'SERVER=localhost\MSSQLSERVER01;'  
+    'SERVER=HUGIE;'  
     'DATABASE=AcessBases;'
     'Trusted_Connection=yes;'  
 )
 
 cursor = conn.cursor()
 
-opcao = input("(1) - Cadastrar Base\n(2) - Logar em Base\n(3) - Excluir Base\n")
+opcao = input("(1) - Cadastrar Base\n(2) - Logar em Base\n(3) - Excluir Base\n(4) - Consultar Base\n")
 
 if opcao == "1":
     nome = input("Digite o nome: ")
@@ -45,14 +45,12 @@ elif opcao == "2":
     options.add_experimental_option("detach", True)
     driver = webdriver.Chrome(options=options)
     driver.get("https://mob.nox.com.br/Login")
-    driver.implicitly_wait(0.5)
-    login = driver.find_element(By.NAME, value="cnpj").send_keys(user_cnpj)
-    driver.implicitly_wait(0.5)
-    email = driver.find_element(By.NAME, value="user").send_keys(user_email)
-    driver.implicitly_wait(0.5)
-    senha = driver.find_element(By.NAME, value="password").send_keys(user_senha)
-    driver.implicitly_wait(0.5)
-    submit_button = driver.find_element(By.ID, value="btnLogin").click()
+    driver.maximize_window()
+    driver.find_element(By.NAME, "cnpj").send_keys(user_cnpj)
+    driver.find_element(By.NAME, "user").send_keys(user_email)
+    driver.find_element(By.NAME, "password").send_keys(user_senha)
+    time.sleep(3)
+    driver.find_element(By.ID, "btnLogin").click()
 
 
 elif opcao == "3":
@@ -66,6 +64,22 @@ elif opcao == "3":
     cursor.execute("DELETE FROM Bases WHERE Id = ?", (opcao_delete))
     conn.commit()
     print("Base Removida!")
+    
+    
+elif opcao == "4":
+    cursor.execute("""SELECT Id, Nome FROM Bases""")
+    bases = cursor.fetchall()
+    for base in bases:
+        print(f"({base.Id}) - {base.Nome}")
+    opcao_busca = input("Deseja ver os dados de qual base?\n")
+    opcao_busca = int(opcao_busca)
+    cursor.execute("""SELECT Id, Nome, Cnpj, Email, Senha FROM Bases WHERE Id = ?""", (opcao_busca))
+    base_buscada = cursor.fetchall()
+    print(base_buscada)
+    # print(f"{base_buscada.Id}\n{base_buscada.Nome}\n{base_buscada.Cnpj}\n{base_buscada.Email}\n{base_buscada.Senha}")
+    
+    
+    
     
 
 
