@@ -6,7 +6,7 @@ import time
 
 conn = pyodbc.connect(
     'DRIVER={ODBC Driver 17 for SQL Server};'
-    'SERVER=HUGIE;'  
+    'SERVER=DESKTOP-O7IC417\MSSQLSERVER01;'  
     'DATABASE=AcessBases;'
     'Trusted_Connection=yes;'  
 )
@@ -34,7 +34,7 @@ def loginBase ():
     time.sleep(0.5)
     driver.find_element(By.ID, "btnLogin").click()
 
-opcao = input("(1) - Cadastrar Base\n(2) - Logar em Base\n(3) - Editar dados(Manutenção)\n(4) - Consultar Base\n(5) - Excluir Base")
+opcao = input("(1) - Cadastrar Base\n(2) - Logar em Base\n(3) - Editar dados\n(4) - Consultar Base\n(5) - Excluir Base\n")
 
 if opcao == "1":
     nome = input("Digite o nome: ")
@@ -62,18 +62,24 @@ elif opcao =="3":
     bases = cursor.fetchall()
     for base in bases:
         print(f"({base.Id}) - {base.Nome}")
-    opcao_edicao = input("Qual base deseja editar?")
+    opcao_edicao = input("Qual base deseja editar?\n")
     opcao_edicao = int(opcao_edicao)
-    
-    
-    
+    cursor.execute("""SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE COLUMN_NAME != 'Id' AND TABLE_NAME = 'Bases'""")
+    base_columns = cursor.fetchall()
+    for i in range(0,len(base_columns)):
+        print(f"({i}) - {base_columns[i][0]}")
+        
+    opcao_campo = input("Qual campo deseja editar?\n")
+    opcao_campo = int(opcao_campo)
+    opcao_campo = base_columns[opcao_campo][0]
+    modificacao = input("Digite o novo valor\n")
+    query = f"UPDATE Bases SET {opcao_campo} = ? WHERE Id = ?"
+    cursor.execute(query, (modificacao, opcao_edicao))
+    conn.commit()
+    print("Alteração Realizada!")
+        
 
 
-    
-    
-
-    
-    
     
 elif opcao == "4":
     cursor.execute("""SELECT Id, Nome FROM Bases""")
@@ -82,9 +88,11 @@ elif opcao == "4":
         print(f"({base.Id}) - {base.Nome}")
     opcao_busca = input("Deseja ver os dados de qual base?\n")
     opcao_busca = int(opcao_busca)
-    cursor.execute("""SELECT Id, Nome, Cnpj, Email, Senha FROM Bases WHERE Id = ?""", (opcao_busca))
+    cursor.execute("""SELECT * FROM Bases WHERE Id = ?""", opcao_busca)
     base_buscada = cursor.fetchall()
-    print(base_buscada)
+    for i in base_buscada:
+        for valor in i:
+            print(valor)
    
     
 elif opcao == "5":
@@ -95,7 +103,7 @@ elif opcao == "5":
     
     opcao_delete = input("Qual base deseja excluir?\n")
     opcao_delete = int(opcao_delete)
-    cursor.execute("DELETE FROM Bases WHERE Id = ?", (opcao_delete))
+    cursor.execute("DELETE FROM Bases WHERE Id = ?", opcao_delete)
     conn.commit()
     print("Base Removida!")
     
