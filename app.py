@@ -88,7 +88,7 @@ elif opcao == "4":
         print(f"({base.Id}) - {base.Nome}")
     opcao_busca = input("Deseja ver os dados de qual base?\n")
     opcao_busca = int(opcao_busca)
-    cursor.execute("""SELECT * FROM Bases WHERE Id = ?""", opcao_busca)
+    cursor.execute("""SELECT Nome, Cnpj, Email, Senha FROM Bases WHERE Id = ?""", opcao_busca)
     base_buscada = cursor.fetchall()
     for i in base_buscada:
         for valor in i:
