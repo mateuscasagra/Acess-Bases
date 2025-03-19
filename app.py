@@ -13,21 +13,20 @@ conn = pyodbc.connect(
     'Trusted_Connection=yes;'  
 )
 
+
 pagAberta = 0
-
 cursor = conn.cursor()
-
+estado = True
 def loginBase ():
-    global pagAberta
     global driver  
+    global pagAberta
+    if pagAberta == 1:
+        driver.quit()
+        pagAberta = 0 
     cursor.execute("""SELECT Id, Nome FROM Bases ORDER BY Id""")
     bases = cursor.fetchall()
     for base in range(0, len(bases)):
         print(f"({base}) - {bases[base][1]}")
-    
-    if pagAberta == 1:
-        driver.close()
-        pagAberta = 0  
     
     opcao_bases = input("Qual base deseja acessar?\n")
     opcao_bases = int(opcao_bases)
@@ -46,7 +45,7 @@ def loginBase ():
     time.sleep(0.5)
     driver.find_element(By.ID, "btnLogin").click()
     pagAberta = 1
-estado = True
+
 while estado:
     
     opcao = input("\n(1) - Cadastrar Base\n(2) - Logar em Base\n(3) - Editar dados\n(4) - Consultar Base\n(5) - Excluir Base\n(6) - Limpar\n(7) - Sair\n")
@@ -128,8 +127,11 @@ while estado:
         os.system('cls')
         
     elif opcao == "7":
+        session = driver.session_id
+        if session:
+            driver.quit()
+            
         estado = False
-        driver.close()
         print("\nSistema Encerrado\n")
         
         
