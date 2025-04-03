@@ -4,6 +4,7 @@ from selenium.webdriver.common.by import By
 import pyodbc
 import time
 import os
+import random
 
 
 conn = pyodbc.connect(
@@ -46,9 +47,24 @@ def loginBase ():
     driver.find_element(By.ID, "btnLogin").click()
     pagAberta = 1
 
+def gerar_cnpj():
+    base = [random.randint(0, 9) for _ in range(8)]
+    filial = [random.randint(0, 9) for _ in range(4)]  
+    cnpj_parcial = base + filial  
+    peso_1 = [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2]
+    soma_1 = sum([cnpj_parcial[i] * peso_1[i] for i in range(12)])
+    digito_1 = (soma_1 % 11)
+    digito_1 = 0 if digito_1 < 2 else 11 - digito_1
+    peso_2 = [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2]
+    soma_2 = sum([cnpj_parcial[i] * peso_2[i] for i in range(12)]) + (digito_1 * 2)
+    digito_2 = (soma_2 % 11)
+    digito_2 = 0 if digito_2 < 2 else 11 - digito_2
+    cnpj = f"{''.join(map(str, base))}{''.join(map(str, filial))}{digito_1}{digito_2}"
+    print(cnpj)
+
 while estado:
     
-    opcao = input("\n(1) - Cadastrar Base\n(2) - Logar em Base\n(3) - Editar dados\n(4) - Consultar Base\n(5) - Excluir Base\n(6) - Limpar\n(7) - Sair\n")
+    opcao = input("\n(1) - Cadastrar Base\n(2) - Logar em Base\n(3) - Editar dados\n(4) - Consultar Base\n(5) - Excluir Base\n(6) - Limpar\n(7) - Gerar CNPJ\n(8) - Fechar Navegador\n(9) - Sair\n")
     if opcao == "1":
         nome = input("Digite o nome: ")
         cnpj = input("Digite o CNPJ: ")
@@ -126,18 +142,17 @@ while estado:
     elif opcao == "6":
         os.system('cls')
         
+        
     elif opcao == "7":
-        session = driver.session_id
-        if session:
+        gerar_cnpj()
+    elif opcao == "8":
+        driver.quit()
+        pagAberta = 0
+        
+    elif opcao == "9":
+        
+        if pagAberta == 1:
             driver.quit()
             
         estado = False
         print("\nSistema Encerrado\n")
-        
-        
-    
-    
-    
-    
-
-
