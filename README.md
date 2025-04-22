@@ -10,7 +10,7 @@ Durante as atividades diárias, era necessário acessar diversas bases de client
 
 - **Automação de Login**: Acesso automatizado às bases de clientes via navegador.
 - **Gerenciamento de Credenciais**: Armazenamento seguro e organizado das credenciais no SQL Server.
-- **Consulta**: Busca rápida por cliente, e-mail ou domínio.
+- **Consulta**: Busca rápida pelas credencias cadastradas.
 
 
 ## Tecnologias Utilizadas
