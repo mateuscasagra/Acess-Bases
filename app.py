@@ -9,7 +9,7 @@ import random
 
 conn = pyodbc.connect(
     'DRIVER={ODBC Driver 17 for SQL Server};'
-    'SERVER=HUGIE;'  
+    'SERVER=nome_servidor;'  
     'DATABASE=AcessBases;'
     'Trusted_Connection=yes;'  
 )
